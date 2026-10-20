@@ -1,11 +1,10 @@
-
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from db import get_connection
 from mysql.connector import IntegrityError
 
 app = Flask(__name__)
-app.secret_key = "sports-facility-local-key"
-
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "sports-facility-local-key")
 
 @app.route("/")
 def dashboard():
