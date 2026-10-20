@@ -1,114 +1,28 @@
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ action }} Booking</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-</head>
-<body class="bg-light">
+{% block title %}{{ action }} Booking | University Athletics{% endblock %}
 
-<div class="container mt-5" style="max-width: 750px;">
-
-    <h2 class="mb-4">{{ action }} Booking</h2>
-
-    {% if error_message %}
-        <div class="alert alert-danger">{{ error_message }}</div>
-    {% endif %}
-
+{% block content %}
+<header class="page-header"><div class="eyebrow">Facility schedule</div><h1>{{ action }} Booking</h1><p class="page-description">Set the booking time, participants, facility, and current status.</p></header>
+<section class="form-panel" aria-label="Booking details">
+    {% if error_message %}<div class="alert alert-danger mb-4" role="alert">{{ error_message }}</div>{% endif %}
     <form method="POST">
-
-        <div class="mb-3">
-            <label class="form-label">Booking ID</label>
-            <input type="text" name="BookingID" class="form-control"
-                   value="{{ booking.BookingID if booking else '' }}"
-                   maxlength="20" required
-                   {% if booking and action == 'Edit' %}readonly{% endif %}>
+        <div class="row g-3">
+            <div class="col-md-6"><label for="BookingID" class="form-label">Booking ID</label><input id="BookingID" type="text" name="BookingID" class="form-control" value="{{ booking.BookingID if booking else '' }}" maxlength="20" required {% if booking and action == 'Edit' %}readonly{% endif %}></div>
+            <div class="col-md-6"><label for="BookingDate" class="form-label">Booking Date</label><input id="BookingDate" type="date" name="BookingDate" class="form-control" value="{{ booking.BookingDate if booking and booking.BookingDate else '' }}" required></div>
+            <div class="col-md-6"><label for="StartTime" class="form-label">Start Time</label><input id="StartTime" type="time" name="StartTime" class="form-control" value="{{ booking.StartTime|string if booking else '' }}" required></div>
+            <div class="col-md-6"><label for="EndTime" class="form-label">End Time</label><input id="EndTime" type="time" name="EndTime" class="form-control" value="{{ booking.EndTime|string if booking else '' }}" required></div>
+            <div class="col-md-6"><label for="StudentID" class="form-label">Student</label><select id="StudentID" name="StudentID" class="form-select" required><option value="">Select a student</option>{% for student in students %}<option value="{{ student.StudentID }}" {% if booking and booking.StudentID == student.StudentID %}selected{% endif %}>{{ student.FirstName }} {{ student.LastName }} ({{ student.StudentID }})</option>{% endfor %}</select></div>
+            <div class="col-md-6"><label for="sportSelect" class="form-label">Sport</label><select name="SportID" id="sportSelect" class="form-select" required><option value="">Select a sport</option>{% for sport in sports %}<option value="{{ sport.SportID }}" {% if booking and booking.SportID == sport.SportID %}selected{% endif %}>{{ sport.SportName }}</option>{% endfor %}</select></div>
+            <div class="col-md-6"><label for="venueSelect" class="form-label">Venue</label><select name="VenueID" id="venueSelect" class="form-select" required><option value="">Select a venue</option>{% for venue in venues %}<option value="{{ venue.VenueID }}" data-sport="{{ venue.SportID }}" {% if booking and booking.VenueID == venue.VenueID %}selected{% endif %}>{{ venue.VenueName }} ({{ venue.VenueID }})</option>{% endfor %}</select></div>
+            <div class="col-md-6"><label for="Status" class="form-label">Status</label><select id="Status" name="Status" class="form-select" required>{% for status in statuses %}<option value="{{ status }}" {% if booking and booking.Status == status %}selected{% elif not booking and status == 'Pending' %}selected{% endif %}>{{ status }}</option>{% endfor %}</select></div>
         </div>
-
-        <div class="mb-3">
-            <label class="form-label">Booking Date</label>
-            <input type="date" name="BookingDate" class="form-control"
-                 value="{{ booking.BookingDate if booking and booking.BookingDate else '' }}"
-                   required>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Start Time</label>
-            <input type="time" name="StartTime" class="form-control"
-                   value="{{ booking.StartTime|string if booking else '' }}"
-                   required>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">End Time</label>
-            <input type="time" name="EndTime" class="form-control"
-                   value="{{ booking.EndTime|string if booking else '' }}"
-                   required>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Student</label>
-            <select name="StudentID" class="form-select" required>
-                <option value="">Select a student</option>
-                {% for student in students %}
-                    <option value="{{ student.StudentID }}"
-                        {% if booking and booking.StudentID == student.StudentID %}selected{% endif %}>
-                        {{ student.FirstName }} {{ student.LastName }}
-                        ({{ student.StudentID }})
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Sport</label>
-            <select name="SportID" id="sportSelect" class="form-select" required>
-                <option value="">Select a sport</option>
-                {% for sport in sports %}
-                    <option value="{{ sport.SportID }}"
-                        {% if booking and booking.SportID == sport.SportID %}selected{% endif %}>
-                        {{ sport.SportName }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Venue</label>
-            <select name="VenueID" id="venueSelect" class="form-select" required>
-                <option value="">Select a venue</option>
-                {% for venue in venues %}
-                    <option value="{{ venue.VenueID }}"
-                            data-sport="{{ venue.SportID }}"
-                        {% if booking and booking.VenueID == venue.VenueID %}selected{% endif %}>
-                        {{ venue.VenueName }} ({{ venue.VenueID }})
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Status</label>
-            <select name="Status" class="form-select" required>
-                {% for status in statuses %}
-                    <option value="{{ status }}"
-                        {% if booking and booking.Status == status %}selected
-                        {% elif not booking and status == 'Pending' %}selected{% endif %}>
-                        {{ status }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-success">Save Booking</button>
-        <a href="{{ url_for('bookings') }}" class="btn btn-secondary">Cancel</a>
-
+        <div class="form-actions"><button type="submit" class="btn btn-success">{{ 'Update' if action == 'Edit' else 'Save' }} Booking</button><a href="{{ url_for('bookings') }}" class="btn btn-outline-secondary">Cancel</a></div>
     </form>
-</div>
+</section>
+{% endblock %}
 
+{% block scripts %}
 <script>
     const sportSelect = document.getElementById("sportSelect");
     const venueSelect = document.getElementById("venueSelect");
@@ -136,7 +50,4 @@
     sportSelect.addEventListener("change", filterVenues);
     filterVenues();
 </script>
-
-</body>
-</html>
-
+{% endblock %}

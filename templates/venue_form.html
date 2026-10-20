@@ -1,76 +1,19 @@
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ action }} Venue</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-</head>
-<body class="bg-light">
+{% block title %}{{ action }} Venue | University Athletics{% endblock %}
 
-<div class="container mt-5" style="max-width: 650px;">
-
-    <h2 class="mb-4">{{ action }} Venue</h2>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-    {% endwith %}
-
+{% block content %}
+<header class="page-header"><div class="eyebrow">Facilities</div><h1>{{ action }} Venue</h1><p class="page-description">Set the facility name, location, capacity, and supported sport.</p></header>
+<section class="form-panel" aria-label="Venue details">
     <form method="POST">
-
-        <div class="mb-3">
-            <label class="form-label">Venue ID</label>
-            <input type="text" name="VenueID" class="form-control"
-                   value="{{ venue.VenueID if venue else '' }}"
-                   maxlength="20" required
-                   {% if venue and action == 'Edit' %}readonly{% endif %}>
+        <div class="row g-3">
+            <div class="col-12"><label for="VenueID" class="form-label">Venue ID</label><input id="VenueID" type="text" name="VenueID" class="form-control" value="{{ venue.VenueID if venue else '' }}" maxlength="20" required {% if venue and action == 'Edit' %}readonly{% endif %}></div>
+            <div class="col-md-6"><label for="VenueName" class="form-label">Venue Name</label><input id="VenueName" type="text" name="VenueName" class="form-control" value="{{ venue.VenueName if venue else '' }}" maxlength="100" required></div>
+            <div class="col-md-6"><label for="Location" class="form-label">Location</label><input id="Location" type="text" name="Location" class="form-control" value="{{ venue.Location if venue else '' }}" maxlength="150" required></div>
+            <div class="col-md-6"><label for="Capacity" class="form-label">Capacity</label><input id="Capacity" type="number" name="Capacity" class="form-control" value="{{ venue.Capacity if venue else '' }}" min="0" max="4294967295" required></div>
+            <div class="col-md-6"><label for="SportID" class="form-label">Sport</label><select id="SportID" name="SportID" class="form-select" required><option value="">Select a sport</option>{% for sport in sports %}<option value="{{ sport.SportID }}" {% if venue and venue.SportID == sport.SportID %}selected{% endif %}>{{ sport.SportName }} ({{ sport.SportID }})</option>{% endfor %}</select></div>
         </div>
-
-        <div class="mb-3">
-            <label class="form-label">Venue Name</label>
-            <input type="text" name="VenueName" class="form-control"
-                   value="{{ venue.VenueName if venue else '' }}"
-                   maxlength="100" required>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Location</label>
-            <input type="text" name="Location" class="form-control"
-                   value="{{ venue.Location if venue else '' }}"
-                   maxlength="150" required>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Capacity</label>
-            <input type="number" name="Capacity" class="form-control"
-                   value="{{ venue.Capacity if venue else '' }}"
-                   min="0" max="4294967295" required>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Sport</label>
-            <select name="SportID" class="form-select" required>
-                <option value="">Select a sport</option>
-
-                {% for sport in sports %}
-                    <option value="{{ sport.SportID }}"
-                        {% if venue and venue.SportID == sport.SportID %}selected{% endif %}>
-                        {{ sport.SportName }} ({{ sport.SportID }})
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-success">Save Venue</button>
-        <a href="{{ url_for('venues') }}" class="btn btn-secondary">Cancel</a>
-
+        <div class="form-actions"><button type="submit" class="btn btn-success">{{ 'Update' if action == 'Edit' else 'Save' }} Venue</button><a href="{{ url_for('venues') }}" class="btn btn-outline-secondary">Cancel</a></div>
     </form>
-
-</div>
-</body>
-</html>
-
+</section>
+{% endblock %}
