@@ -1,60 +1,17 @@
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ action }} Sport</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-</head>
-<body class="bg-light">
+{% block title %}{{ action }} Sport | University Athletics{% endblock %}
 
-<div class="container mt-5" style="max-width: 600px;">
-
-    <h2 class="mb-4">{{ action }} Sport</h2>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-    {% endwith %}
-
+{% block content %}
+<header class="page-header"><div class="eyebrow">Sports programs</div><h1>{{ action }} Sport</h1><p class="page-description">Provide the sport identifier and classification details.</p></header>
+<section class="form-panel" aria-label="Sport details">
     <form method="POST">
-
-        <div class="mb-3">
-            <label class="form-label">Sport ID</label>
-            <input type="text" name="SportID" class="form-control"
-                   value="{{ sport.SportID if sport else '' }}"
-                   maxlength="20" required
-                   {% if sport %}readonly{% endif %}>
+        <div class="row g-3">
+            <div class="col-12"><label for="SportID" class="form-label">Sport ID</label><input id="SportID" type="text" name="SportID" class="form-control" value="{{ sport.SportID if sport else '' }}" maxlength="20" required {% if sport %}readonly{% endif %}></div>
+            <div class="col-md-6"><label for="SportName" class="form-label">Sport Name</label><input id="SportName" type="text" name="SportName" class="form-control" value="{{ sport.SportName if sport else '' }}" maxlength="100" required></div>
+            <div class="col-md-6"><label for="Category" class="form-label">Category</label><input id="Category" type="text" name="Category" class="form-control" value="{{ sport.Category if sport else '' }}" maxlength="50" required></div>
         </div>
-
-        <div class="mb-3">
-            <label class="form-label">Sport Name</label>
-            <input type="text" name="SportName" class="form-control"
-                   value="{{ sport.SportName if sport else '' }}"
-                   maxlength="100" required>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Category</label>
-            <input type="text" name="Category" class="form-control"
-                   value="{{ sport.Category if sport else '' }}"
-                   maxlength="50" required>
-        </div>
-
-        <button type="submit" class="btn btn-success">
-            Save Sport
-        </button>
-
-        <a href="{{ url_for('sports') }}" class="btn btn-secondary">
-            Cancel
-        </a>
-
+        <div class="form-actions"><button type="submit" class="btn btn-success">{{ 'Update' if action == 'Edit' else 'Save' }} Sport</button><a href="{{ url_for('sports') }}" class="btn btn-outline-secondary">Cancel</a></div>
     </form>
-
-</div>
-</body>
-</html>
-
+</section>
+{% endblock %}
