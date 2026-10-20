@@ -26,7 +26,7 @@ PAGES = [
     ("/coaches", "Coach Management"),
     ("/venues", "Venue Management"),
     ("/equipment", "Equipment Management"),
-    ("/coach-certifications", "Coach Certification Management"),
+    ("/certifications", "Coach Certification Management"),
     ("/bookings", "Booking Management"),
     ("/payments", "Payment Management"),
 ]
